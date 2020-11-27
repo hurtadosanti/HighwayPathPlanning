@@ -12,7 +12,7 @@ using std::vector;
 
 class Planner {
 public:
-    void static waypoint_planner(const vector<double> &map_waypoints_x, const vector<double> &map_waypoints_y,
+    void static waypoint_planner(double &ref_velocity, const vector<double> &map_waypoints_x, const vector<double> &map_waypoints_y,
                           const vector<double> &map_waypoints_s, double car_x, double car_y, double car_s, double car_yaw,
                           const vector<double> &previous_path_x, const vector<double> &previous_path_y, vector<double> &next_x_vals,
                           vector<double> &next_y_vals);
