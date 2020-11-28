@@ -51,10 +51,11 @@ int main() {
         map_waypoints_dy.push_back(d_y);
     }
 
-    double ref_velocity  = 0.224;//mph
+    double ref_velocity = 0.224;//mph
+    int lane = 1;
 
     h.onMessage([&map_waypoints_x, &map_waypoints_y, &map_waypoints_s,
-                        &map_waypoints_dx, &map_waypoints_dy,&ref_velocity]
+                        &map_waypoints_dx, &map_waypoints_dy, &ref_velocity, &lane]
                         (uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                          uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
@@ -95,40 +96,10 @@ int main() {
                     vector<double> next_x_values;
                     vector<double> next_y_values;
 
-                    bool too_close = false;
-                    int lane = 1;
-
-
-                    if(previous_path_x.size()>0){
-                        car_s = end_path_s;
-                    }
-                    for(size_t i=0;i<sensor_fusion.size();++i){
-                        auto d = sensor_fusion[i][6];
-                        // if the car is in my lane we check the velocity and distance
-                        if(d<(2+4*lane+2)&&d>(2+4*lane-2)){
-                            double vx = sensor_fusion[i][3];
-                            double vy = sensor_fusion[i][4];
-                            auto check_speed = sqrt(vx*vx+vy*vy);
-                            double check_s = sensor_fusion[i][5];
-                            check_s+=previous_path_x.size()*0.02*check_speed;
-                            if(check_s>car_s&&(check_s-car_s)<30) {
-                                //ref_velocity = 29,5;
-                                too_close = true;
-                            }
-                        }
-                    }
-                    if(too_close){
-                        ref_velocity-=0.224;
-                        std::cout<<"decrease"<<ref_velocity<<std::endl;
-                    }else if(ref_velocity<49.5){
-                        ref_velocity+=0.224;
-                        std::cout<<"increment"<<ref_velocity<<std::endl;
-                    }
-
-
-                    Planner::waypoint_planner(ref_velocity,map_waypoints_x, map_waypoints_y, map_waypoints_s, car_x, car_y, car_s, car_yaw,
-                                     previous_path_x, previous_path_y,
-                                     next_x_values, next_y_values);
+                    Planner::waypoint_planner(ref_velocity, lane, map_waypoints_x, map_waypoints_y, map_waypoints_s,
+                                              car_x, car_y, car_s, car_yaw,
+                                              previous_path_x, previous_path_y,
+                                              next_x_values, next_y_values, end_path_s, sensor_fusion);
 
                     msgJson["next_x"] = next_x_values;
                     msgJson["next_y"] = next_y_values;
