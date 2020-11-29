@@ -22,36 +22,10 @@ void Planner::waypoint_planner(double &ref_velocity, int &lane, const vector<dou
 
     double ref_yaw = deg2rad(car_yaw);
 
-    bool too_close = false;
-
-    if (previous_path_x.size() > 0) {
+    if (!previous_path_x.empty()) {
         car_s = end_path_s;
     }
-    for (size_t i = 0; i < sensor_fusion.size(); ++i) {
-        auto d = sensor_fusion[i][6];
-        // if the car is in my lane we check the velocity and distance
-        if (d < (2 + 4 * lane + 2) && d > (2 + 4 * lane - 2)) {
-            double vx = sensor_fusion[i][3];
-            double vy = sensor_fusion[i][4];
-            auto check_speed = sqrt(vx * vx + vy * vy);
-            double check_s = sensor_fusion[i][5];
-            check_s += previous_path_x.size() * 0.02 * check_speed;
-            if (check_s > car_s && (check_s - car_s) < 30) {
-                //ref_velocity = 29,5;
-                too_close = true;
-            }
-        }
-    }
-    if (too_close) {
-        ref_velocity -= 0.2;
-        if (lane > 0) {
-            lane = 0;
-        }
-    } else if (ref_velocity < 49.5) {
-        ref_velocity += 0.224;
-    }
-
-
+    change_lanes(car_s, previous_path_x, sensor_fusion, ref_velocity, lane);
     if (previous_path_x.size() < 2) {
         double last_x = car_x - cos(ref_yaw);
         double last_y = car_y - sin(ref_yaw);
@@ -76,6 +50,7 @@ void Planner::waypoint_planner(double &ref_velocity, int &lane, const vector<dou
         pts_y.push_back(ref_y);
     }
 
+    // waypoint includes the lane change
     auto next_wp_0 = getXY(car_s + 30, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
     auto next_wp_1 = getXY(car_s + 60, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
     auto next_wp_2 = getXY(car_s + 90, (2 + 4 * lane), map_waypoints_s, map_waypoints_x, map_waypoints_y);
@@ -128,5 +103,64 @@ void Planner::waypoint_planner(double &ref_velocity, int &lane, const vector<dou
 
         next_x_vals.push_back(x_point);
         next_y_vals.push_back(y_point);
+    }
+}
+
+void
+Planner::change_lanes(double car_s, const vector<double> &previous_path_x, const vector<vector<double>> &sensor_fusion,
+                      double &ref_velocity, int &lane) {
+    bool too_close = false;
+    bool can_turn_left = true;
+    bool can_turn_right = true;
+
+    for (size_t i = 0; i < sensor_fusion.size(); ++i) {
+        auto d = sensor_fusion[i][6];
+        // if the car is in my lane we check the velocity and distance
+        if (d < (2 + 4 * lane + 2) && d > (2 + 4 * lane - 2)) {
+            double vx = sensor_fusion[i][3];
+            double vy = sensor_fusion[i][4];
+            auto check_speed = sqrt(vx * vx + vy * vy);
+            double check_s = sensor_fusion[i][5];
+            check_s += previous_path_x.size() * 0.02 * check_speed;
+            if (check_s > car_s && (check_s - car_s) < 20) {
+                //ref_velocity = 29,5;
+                too_close = true;
+            }
+        }
+        // can turn lef?
+        if ((lane-1)>=0 &&d < (2 + 4 * (lane-1) + 2) && d > (2 + 4 * (lane-1) - 2)) {
+            double vx = sensor_fusion[i][3];
+            double vy = sensor_fusion[i][4];
+            auto check_speed = sqrt(vx * vx + vy * vy);
+            double check_s = sensor_fusion[i][5];
+            check_s += previous_path_x.size() * 0.02 * check_speed;
+            if (abs(check_s - car_s) < 20) {
+                can_turn_left = false;
+            }
+        }
+        // can turn right?
+        if ((lane+1)<=2 && d < (2 + 4 * (lane+1) + 2) && d > (2 + 4 * (lane+1) - 2)) {
+            double vx = sensor_fusion[i][3];
+            double vy = sensor_fusion[i][4];
+            auto check_speed = sqrt(vx * vx + vy * vy);
+            double check_s = sensor_fusion[i][5];
+            check_s += previous_path_x.size() * 0.02 * check_speed;
+            if (abs(check_s - car_s) < 20) {
+                can_turn_right = false;
+            }
+        }
+    }
+    if (too_close) {
+        ref_velocity -= 0.2;
+        if (lane == 1 and can_turn_left) {
+            lane = 0;
+        }else if(lane == 0 and can_turn_right){
+            lane++;
+        }else if(lane ==2 and can_turn_left){
+            lane--;
+        }
+    } else if (ref_velocity < 49.5) {
+        // keeps accelerating until speed limit is achieved
+        ref_velocity += 0.224;
     }
 }
