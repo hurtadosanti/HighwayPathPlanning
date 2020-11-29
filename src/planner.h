@@ -14,7 +14,7 @@ using std::vector;
 /**
  * Plans vehicle motion on a highway given a mat and sensor fusion data
  */
-class Planner {
+class planner {
 public:
     /**
     * Plans a path from Map coordinates to Frenet

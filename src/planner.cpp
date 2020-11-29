@@ -2,9 +2,9 @@
 // Created by shurtado on 11/26/2020.
 //
 
-#include "Planner.h"
+#include "planner.h"
 
-void Planner::waypoint_planner(double &ref_velocity, int &lane, const vector<double> &map_waypoints_x,
+void planner::waypoint_planner(double &ref_velocity, int &lane, const vector<double> &map_waypoints_x,
                                const vector<double> &map_waypoints_y,
                                const vector<double> &map_waypoints_s, double car_x, double car_y, double car_s,
                                double car_yaw,
@@ -109,7 +109,7 @@ void Planner::waypoint_planner(double &ref_velocity, int &lane, const vector<dou
 }
 
 void
-Planner::change_lanes(double car_s, const vector<double> &previous_path_x, const vector<vector<double>> &sensor_fusion,
+planner::change_lanes(double car_s, const vector<double> &previous_path_x, const vector<vector<double>> &sensor_fusion,
                       double &ref_velocity, int &lane) {
     bool too_close = false;
     bool can_turn_left = true;

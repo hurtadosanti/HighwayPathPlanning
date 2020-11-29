@@ -1,4 +1,4 @@
-#include "Planner.h"
+#include "planner.h"
 #include <uWS/uWS.h>
 #include <fstream>
 #include <iostream>
@@ -82,7 +82,7 @@ int main() {
                     double car_yaw = j[1]["yaw"];
                     double car_speed = j[1]["speed"];
 
-                    // Previous path data given to the Planner
+                    // Previous path data given to the planner
                     auto previous_path_x = j[1]["previous_path_x"];
                     auto previous_path_y = j[1]["previous_path_y"];
                     // Previous path's end s and d values
@@ -96,7 +96,7 @@ int main() {
                     vector<double> next_x_values;
                     vector<double> next_y_values;
 
-                    Planner::waypoint_planner(ref_velocity, lane, map_waypoints_x, map_waypoints_y, map_waypoints_s,
+                    planner::waypoint_planner(ref_velocity, lane, map_waypoints_x, map_waypoints_y, map_waypoints_s,
                                               car_x, car_y, car_s, car_yaw,
                                               previous_path_x, previous_path_y,
                                               next_x_values, next_y_values, end_path_s, sensor_fusion);
