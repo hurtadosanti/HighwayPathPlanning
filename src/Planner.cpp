@@ -25,7 +25,9 @@ void Planner::waypoint_planner(double &ref_velocity, int &lane, const vector<dou
     if (!previous_path_x.empty()) {
         car_s = end_path_s;
     }
+    // if there is an obstacle calculate if is possible to change lanes and execute it
     change_lanes(car_s, previous_path_x, sensor_fusion, ref_velocity, lane);
+
     if (previous_path_x.size() < 2) {
         double last_x = car_x - cos(ref_yaw);
         double last_y = car_y - sin(ref_yaw);
@@ -128,7 +130,7 @@ Planner::change_lanes(double car_s, const vector<double> &previous_path_x, const
             }
         }
         // can turn lef?
-        if ((lane-1)>=0 &&d < (2 + 4 * (lane-1) + 2) && d > (2 + 4 * (lane-1) - 2)) {
+        if ((lane - 1) >= 0 && d < (2 + 4 * (lane - 1) + 2) && d > (2 + 4 * (lane - 1) - 2)) {
             double vx = sensor_fusion[i][3];
             double vy = sensor_fusion[i][4];
             auto check_speed = sqrt(vx * vx + vy * vy);
@@ -139,7 +141,7 @@ Planner::change_lanes(double car_s, const vector<double> &previous_path_x, const
             }
         }
         // can turn right?
-        if ((lane+1)<=2 && d < (2 + 4 * (lane+1) + 2) && d > (2 + 4 * (lane+1) - 2)) {
+        if ((lane + 1) <= 2 && d < (2 + 4 * (lane + 1) + 2) && d > (2 + 4 * (lane + 1) - 2)) {
             double vx = sensor_fusion[i][3];
             double vy = sensor_fusion[i][4];
             auto check_speed = sqrt(vx * vx + vy * vy);
@@ -154,9 +156,9 @@ Planner::change_lanes(double car_s, const vector<double> &previous_path_x, const
         ref_velocity -= 0.2;
         if (lane == 1 and can_turn_left) {
             lane = 0;
-        }else if(lane == 0 and can_turn_right){
+        } else if (lane == 0 and can_turn_right) {
             lane++;
-        }else if(lane ==2 and can_turn_left){
+        } else if (lane == 2 and can_turn_left) {
             lane--;
         }
     } else if (ref_velocity < 49.5) {

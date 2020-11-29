@@ -33,7 +33,6 @@ string hasData(string s) {
 constexpr double pi() { return M_PI; }
 
 
-
 double rad2deg(double x) { return x * 180 / pi(); }
 
 // Calculate distance between two points

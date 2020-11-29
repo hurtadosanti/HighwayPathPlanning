@@ -11,8 +11,14 @@
 
 using std::vector;
 
+/**
+ * Plans vehicle motion on a highway given a mat and sensor fusion data
+ */
 class Planner {
 public:
+    /**
+    * Plans a path from Map coordinates to Frenet
+     */
     void static waypoint_planner(double &ref_velocity, int &lane, const vector<double> &map_waypoints_x,
                                  const vector<double> &map_waypoints_y,
                                  const vector<double> &map_waypoints_s, double car_x, double car_y, double car_s,
@@ -22,8 +28,21 @@ public:
                                  vector<double> &next_y_vals, double end_path_s, vector<vector<double>> sensor_fusion);
 
 private:
+    /**
+     * Calculates if there is a vehicle on the way and plan if is possible to change lanes
+     */
+    static void
+    change_lanes(double car_s, const vector<double> &previous_path_x, const vector<vector<double>> &sensor_fusion,
+                 double &ref_velocity, int &lane);
+
+    /**
+     * Convert from degrees to radians
+     */
     double static deg2rad(double x) { return x * M_PI / 180; }
 
+    /**
+     * Convert from Frenet to Map coordinates
+     * */
     vector<double> static getXY(double s, double d, const vector<double> &maps_s,
                                 const vector<double> &maps_x,
                                 const vector<double> &maps_y) {
@@ -51,9 +70,7 @@ private:
         return {x, y};
     }
 
-    static void
-    change_lanes(double car_s, const vector<double> &previous_path_x, const vector<vector<double>> &sensor_fusion,
-                 double &ref_velocity, int &lane);
+
 };
 
 
