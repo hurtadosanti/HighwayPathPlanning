@@ -15,8 +15,8 @@ not experience total acceleration over 10 m/s^2 and jerk that is greater than 10
 ## Implementation Details
 The project contains a [main.cpp](main.cpp) file that has the task to read the inputs and provide the outputs to the 
 simulator. On the [planner.cpp](planner.cpp) can be found the implementation for the highway planning solution.
-For the complete details of the implementation you can refer to the
-[Implementation description](implementation_description.md)
+For more details you can refer to the post 
+[Motion and Path  Planning for autonomous vehicles](https://advt3.com/posts/path_motion_planning.md)
  
 ## Basic Build Instructions
 - **Clone this repo**
@@ -77,7 +77,6 @@ For more details of the Clion integration go to the post:
 - [Project Definition](https://github.com/udacity/CarND-Path-Planning-Project)
 - [Requirements](https://review.udacity.com/#!/rubrics/1971/view)
 - [Term 3 Simulator](https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2) 
-
 
 ## License
 MIT License Copyright (c) 2016-2018 Udacity, Inc.
