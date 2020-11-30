@@ -15,8 +15,8 @@ not experience total acceleration over 10 m/s^2 and jerk that is greater than 10
 ## Implementation Details
 The project contains a [main.cpp](main.cpp) file that has the task to read the inputs and provide the outputs to the 
 simulator. On the [planner.cpp](planner.cpp) can be found the implementation for the highway planning solution.
-For the complete details of the implementation you can refer to the following article: 
-[Highway Driving Path Planning](https://advt3.com/posts/path_planner)
+For the complete details of the implementation you can refer to the
+[Implementation description](implementation_description.md)
  
 ## Basic Build Instructions
 - **Clone this repo**
